@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hospital Appointment and Revenue Analysis System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy-deep: #07192E;
+      --navy-mid: #0D2D4F;
+      --sapphire: #0284C7;
+      --cyan-glow: #38BDF8;
+      --emerald: #059669;
+      --coral-risk: #E11D48;
+      --amber-warm: #D97706;
+      --canvas-bg: #E6EEF5;
+      --paper: #FFFFFF;
+      --ink-main: #0F172A;
+      --ink-body: #334155;
+      --ink-muted: #64748B;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(14, 165, 233, 0.14), transparent 36%),
+        radial-gradient(circle at 88% 85%, rgba(6, 182, 212, 0.12), transparent 38%),
+        var(--canvas-bg);
+      color: var(--ink-main);
+      margin: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .font-display {
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    }
+
+    .font-mono-num {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ================= REALISTIC REPORT PAGE ARCHITECTURE (10 PAGES) ================= */
+    .report-page {
+      background: var(--paper);
+      border-radius: 24px;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      box-shadow:
+        0 28px 65px -20px rgba(7, 25, 46, 0.18),
+        0 8px 20px -10px rgba(7, 25, 46, 0.08);
+      min-height: 850px;
+      padding: 40px 46px 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease;
+    }
+
+    .report-page.cover-page {
+      padding: 0;
+      background: var(--navy-deep);
+      color: #FFFFFF;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .page-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 20px 0;
+    }
+
+    /* ================= REALISTIC PHOTO FRAMES & KEN BURNS MOTION ================= */
+    .photo-frame {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      box-shadow: 0 18px 38px -16px rgba(7, 25, 46, 0.35);
+      background: #0D2D4F;
+    }
+
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      will-change: transform;
+      animation: kenBurnsSlow 22s ease-in-out infinite alternate;
+    }
+
+    .photo-frame::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(125deg, rgba(255, 255, 255, 0.14) 0%, transparent 40%, rgba(7, 25, 46, 0.22) 100%);
+      pointer-events: none;
+    }
+
+    @keyframes kenBurnsSlow {
+      0% {
+        transform: scale(1) translate3d(0, 0, 0);
+      }
+      100% {
+        transform: scale(1.09) translate3d(-1.5%, -1.5%, 0);
+      }
+    }
+
+    /* Glassmorphic Realistic Surfaces */
+    .glass-dark {
+      background: rgba(7, 25, 46, 0.62);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .glass-light {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    /* ================= LIVING CLINICAL ANIMATIONS ================= */
+    /* 1. Animated ECG Heartbeat Stroke */
+    .ecg-path {
+      stroke-dasharray: 1200;
+      stroke-dashoffset: 1200;
+      animation: ecgDraw 4.2s linear infinite;
+      filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.85));
+    }
+
+    @keyframes ecgDraw {
+      0% {
+        stroke-dashoffset: 1200;
+        opacity: 0.25;
+      }
+      15% {
+        opacity: 1;
+      }
+      80% {
+        stroke-dashoffset: 0;
+        opacity: 1;
+      }
+      100% {
+        stroke-dashoffset: -1200;
+        opacity: 0.25;
+      }
+    }
+
+    /* 2. Pulsing Clinical Beacon */
+    .pulse-beacon {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 10px;
+      height: 10px;
+    }
+
+    .pulse-beacon::before {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      border-radius: 9999px;
+      background: currentColor;
+      opacity: 0.45;
+      animation: clinicalPulse 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    .pulse-beacon::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 9999px;
+      background: currentColor;
+    }
+
+    @keyframes clinicalPulse {
+      0% {
+        transform: scale(0.75);
+        opacity: 0.65;
+      }
+      75%, 100% {
+        transform: scale(2.1);
+        opacity: 0;
+      }
+    }
+
+    /* 3. Shimmer Light Sweep for Hero Financial / Synthesis Panels */
+    .shimmer-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .shimmer-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -130%;
+      width: 75%;
+      height: 100%;
+      background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, 0.14) 50%, transparent 80%);
+      transform: skewX(-18deg);
+      animation: sheenSweep 6.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes sheenSweep {
+      0%, 55% {
+        left: -130%;
+      }
+      100% {
+        left: 160%;
+      }
+    }
+
+    /* 4. Floating Micro-Elevation on Interactive Cards */
+    .lift-card {
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+    }
+
+    .lift-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 36px -14px rgba(7, 25, 46, 0.16);
+      border-color: rgba(2, 132, 199, 0.35);
+    }
+
+    /* 5. Scroll & Slide Entrance Reveal Animations */
+    .reveal-item {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.72s cubic-bezier(0.22, 1, 0.36, 1), transform 0.72s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .report-page.in-view .reveal-item {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .delay-1 { transition-delay: 0.08s; }
+    .delay-2 { transition-delay: 0.18s; }
+    .delay-3 { transition-delay: 0.28s; }
+    .delay-4 { transition-delay: 0.38s; }
+    .delay-5 { transition-delay: 0.48s; }
+
+    /* 6. Animated Metric Bars & Circular Gauges */
+    .anim-bar-fill {
+      width: 0%;
+      transition: width 1.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .report-page.in-view .anim-bar-fill {
+      width: var(--target-width, 0%);
+    }
+
+    .radial-ring-progress {
+      stroke-dasharray: 251.327;
+      stroke-dashoffset: 251.327;
+      transition: stroke-dashoffset 1.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .report-page.in-view .radial-ring-progress {
+      stroke-dashoffset: var(--target-offset, 251.327);
+    }
+
+    /* 7. Animated 27-Scenario Grid Cells */
+    .scenario-cell {
+      animation: scenarioPulse 3.6s ease-in-out infinite;
+    }
+
+    @keyframes scenarioPulse {
+      0%, 100% {
+        opacity: 0.42;
+        transform: scale(0.92);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.08);
+      }
+    }
+
+    /* Pause Animations Toggle Support */
+    body.reduce-motion *,
+    body.reduce-motion *::before,
+    body.reduce-motion *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    body.reduce-motion .reveal-item {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    body.reduce-motion .anim-bar-fill {
+      width: var(--target-width, 0%) !important;
+    }
+
+    body.reduce-motion .radial-ring-progress {
+      stroke-dashoffset: var(--target-offset, 0) !important;
+    }
+
+    /* ================= SLIDE VIEW MODE ================= */
+    body.slide-mode {
+      background: radial-gradient(circle at 50% 0%, #0E2A47 0%, #051120 100%);
+    }
+
+    body.slide-mode .report-container {
+      max-width: 1080px;
+      padding-bottom: 96px;
+    }
+
+    body.slide-mode .report-page {
+      display: none;
+      min-height: 690px;
+      box-shadow: 0 36px 90px rgba(0, 0, 0, 0.55);
+    }
+
+    body.slide-mode .report-page.active-slide {
+      display: flex;
+      animation: slideEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes slideEnter {
+      from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .slide-dock {
+      display: none;
+    }
+
+    body.slide-mode .slide-dock {
+      display: flex;
+    }
+
+    /* ================= RESPONSIVE ADJUSTMENTS ================= */
+    @media (max-width: 768px) {
+      .report-page {
+        padding: 26px 20px 22px;
+        min-height: auto;
+        border-radius: 18px;
+      }
+      .report-page.cover-page {
+        padding: 0;
+      }
+      .page-body {
+        padding: 16px 0;
+      }
+    }
+
+    /* ================= PRINT / PDF EXPORT (EXACTLY 10 A4 PAGES) ================= */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 7mm;
+      }
+
+      body,
+      body.slide-mode {
+        background: #FFFFFF !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      .reveal-item {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      .anim-bar-fill {
+        width: var(--target-width, 0%) !important;
+      }
+
+      .radial-ring-progress {
+        stroke-dashoffset: var(--target-offset, 0) !important;
+      }
+
+      .report-container {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+
+      .report-page,
+      body.slide-mode .report-page {
+        display: flex !important;
+        height: 281mm !important;
+        min-height: 281mm !important;
+        max-height: 281mm !important;
+        margin: 0 !important;
+        padding: 32px 36px 26px !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        border: 1px solid #CBD5E1 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .report-page.cover-page,
+      body.slide-mode .report-page.cover-page {
+        padding: 0 !important;
+      }
+
+      .report-page:last-child,
+      body.slide-mode .report-page:last-child {
+        page-break-after: auto !important;
+        break-after: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= FLOATING REALISTIC CONTROL BAR (HIDDEN ON PRINT) ================= -->
+  <header class="no-print sticky top-0 z-50 bg-[#07192E]/90 backdrop-blur-md border-b border-sky-400/20 text-white px-4 sm:px-6 py-3 shadow-lg">
+    <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="pulse-beacon text-sky-400"></span>
+        <span class="font-display text-xs sm:text-sm font-semibold tracking-tight text-slate-100 truncate max-w-[220px] sm:max-w-none">
+          Hospital Appointment and Revenue Analysis System
+        </span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="btnMotion" type="button" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/10 hover:bg-white/15 border border-white/15 text-sky-200 transition" title="Toggle Motion">
+          Motion: On
+        </button>
+        <div class="inline-flex bg-white/10 p-1 rounded-lg border border-white/15">
+          <button id="btnReport" type="button" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-sky-500 text-white shadow-sm transition">
+            Report View
+          </button>
+          <button id="btnSlide" type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">
+            Slide View
+          </button>
+        </div>
+        <button id="btnPrint" type="button" class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-white text-[#07192E] hover:bg-sky-50 shadow-sm transition">
+          Print / PDF
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN 10-PAGE REALISTIC ANIMATED REPORT ================= -->
+  <main class="report-container max-w-[960px] mx-auto px-4 sm:px-6 py-8 sm:py-10 flex flex-col gap-10">
+
+    <!-- ==================== PAGE 01: CINEMATIC REALISTIC HOSPITAL COVER ==================== -->
+    <section class="report-page cover-page active-slide in-view" data-slide="0">
+      <!-- Realistic Full-Bleed Animated Hospital Exterior Photograph -->
+      <div class="absolute inset-0 overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=1400&q=85"
+          alt="Modern Hospital Building"
+          onerror="this.onerror=null;this.src='https://placehold.co/1400x900/07192E/38BDF8?text=Hospital+Care';"
+          class="w-full h-full object-cover opacity-55"
+          style="animation: kenBurnsSlow 26s ease-in-out infinite alternate;"
+        />
+        <!-- Realistic Deep Twilight Atmospheric Gradient Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-br from-[#07192E]/95 via-[#0B2A4A]/78 to-[#07192E]/92"></div>
+        <!-- Subtle Radial Sapphire Highlight -->
+        <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-sky-400/20 blur-3xl"></div>
+        <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-cyan-400/15 blur-3xl"></div>
+      </div>
+
+      <!-- Cover Foreground Content -->
+      <div class="relative z-10 flex flex-col justify-between min-h-[850px] p-7 sm:p-12">
+        <!-- Top Institutional Bar -->
+        <div class="reveal-item flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-white/15">
+          <div class="glass-dark inline-flex items-center gap-3 px-4 py-2 rounded-full">
+            <span class="pulse-beacon text-sky-400"></span>
+            <span class="text-xs sm:text-sm font-medium text-sky-100 tracking-wide">
+              Department of AI, City University Ajman
+            </span>
+          </div>
+          <span class="font-mono-num text-xs font-semibold text-sky-200/90 glass-dark px-3.5 py-1.5 rounded-full">
+            01 / 10
+          </span>
+        </div>
+
+        <!-- Center Cinematic Hero Card -->
+        <div class="my-auto py-8">
+          <div class="reveal-item delay-1 glass-dark rounded-3xl p-7 sm:p-10 shadow-2xl border border-sky-300/20 max-w-3xl">
+            <div class="w-16 h-1.5 rounded-full bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-400 mb-6"></div>
+            <h1 class="font-display text-3xl sm:text-[48px] font-extrabold text-white leading-[1.12] tracking-tight mb-5">
+              Hospital Appointment and Revenue Analysis System
+            </h1>
+            <p class="text-lg sm:text-[22px] text-sky-100/90 font-normal leading-relaxed">
+              Predicting appointment outcomes and estimating revenue at risk
+            </p>
+          </div>
+
+          <!-- Animated Clinical Heartbeat (ECG) Pulse Horizon -->
+          <div class="reveal-item delay-2 mt-7 w-full overflow-hidden opacity-90" aria-hidden="true">
+            <svg viewBox="0 0 900 68" class="w-full h-14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="0" y1="38" x2="900" y2="38" stroke="rgba(56,189,248,0.18)" stroke-width="1" />
+              <path
+                class="ecg-path"
+                d="M0 38 L180 38 L198 38 L210 24 L222 46 L236 8 L250 60 L264 32 L278 38 L460 38 L478 38 L490 26 L502 44 L516 10 L530 58 L544 34 L558 38 L740 38 L758 38 L770 25 L782 46 L796 12 L810 56 L824 34 L840 38 L900 38"
+                stroke="#38BDF8"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Bottom Authorship Glass Cards -->
+        <div class="reveal-item delay-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="glass-dark rounded-2xl p-4 sm:p-5 border-l-4 border-l-sky-400">
+            <p class="text-sm font-medium text-white leading-relaxed">
+              Presenter: Ameena Abubaker
+            </p>
+          </div>
+          <div class="glass-dark rounded-2xl p-4 sm:p-5 border-l-4 border-l-cyan-300">
+            <p class="text-sm font-medium text-white leading-relaxed">
+              Researchers: Ameena Ababakar · Maram Fouad Mahdeen Kamran
+            </p>
+          </div>
+          <div class="glass-dark rounded-2xl p-4 sm:p-5 border-l-4 border-l-emerald-400">
+            <p class="text-sm font-medium text-white leading-relaxed">
+              Supervisor: Dr. Wafaa M Saleh
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE 02: INTRODUCTION ==================== -->
+    <section class="report-page" data-slide="1">
+      <!-- Top Subtle Clinical Header Bar -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/80">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-sky-600"></span>
+          <span class="font-mono-num text-xs font-semibold text-sky-700 tracking-wider">01</span>
+        </div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">02 / 10</span>
+      </div>
+
+      <div class="page-body">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+          <!-- Left: Realistic Clinical Consultation Photograph -->
+          <div class="md:col-span-5 reveal-item">
+            <div class="photo-frame h-[340px] sm:h-[480px]">
+              <img
+                src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=85"
+                alt="Hospital Physician Scheduling Consultation"
+                onerror="this.onerror=null;this.src='https://placehold.co/800x1000/0D2D4F/FFFFFF?text=Clinical+Care';"
+              />
+              <!-- Subtle Architectural Accent Strip Inside Photo -->
+              <div class="absolute bottom-4 left-4 right-4 glass-dark rounded-xl px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <span class="pulse-beacon text-emerald-400"></span>
+                  <span class="font-mono-num text-xs font-semibold text-white">01</span>
+                </div>
+                <div class="h-1 w-20 rounded-full bg-gradient-to-r from-sky-400 to-emerald-400"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Modern Realistic Editorial Content -->
+          <div class="md:col-span-7 flex flex-col gap-6">
+            <div class="reveal-item delay-1">
+              <div class="w-14 h-1.5 rounded-full bg-gradient-to-r from-sky-600 to-cyan-400 mb-4"></div>
+              <h2 class="font-display text-3xl sm:text-[42px] font-extrabold text-[#07192E] tracking-tight leading-tight">
+                Introduction
+              </h2>
+            </div>
+
+            <div class="reveal-item delay-2 lift-card bg-gradient-to-br from-slate-50 to-sky-50/50 border border-slate-200/90 rounded-2xl p-7 sm:p-9 shadow-sm">
+              <p class="text-[17.5px] sm:text-[19px] leading-[1.9] text-slate-700 font-normal">
+                Good appointment scheduling is very important for any hospital because it affects patient care, doctor time, and clinic income. When patients cancel or miss their visits, doctors waste time and hospitals lose fees, but a cancelled booking can sometimes be given to another patient while a missed one is lost. In this project, we use AI and past booking data to find out visit outcomes and link them to department fees, doctor hours, and simple rescheduling plans.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Subtle Bar -->
+      <div class="flex items-center justify-between pt-4 border-t border-slate-200/80">
+        <div class="h-1 w-20 rounded-full bg-gradient-to-r from-sky-600 to-cyan-400"></div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">02 / 10</span>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE 03: RESEARCH OBJECTIVES ==================== -->
+    <section class="report-page" data-slide="2">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/80">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-sky-600"></span>
+          <span class="font-mono-num text-xs font-semibold text-sky-700 tracking-wider">02</span>
+        </div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">03 / 10</span>
+      </div>
+
+      <div class="page-body gap-7">
+        <!-- Panoramic Realistic Medical Team Photograph Banner -->
+        <div class="reveal-item photo-frame h-[230px] sm:h-[290px] w-full">
+          <img
+            src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1300&q=85"
+            alt="Doctors Collaborating in Modern Hospital"
+            onerror="this.onerror=null;this.src='https://placehold.co/1300x520/0D2D4F/FFFFFF?text=Medical+Research';"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#07192E]/85 via-[#07192E]/25 to-transparent"></div>
+          <div class="absolute bottom-6 left-6 sm:left-8 right-6 flex items-end justify-between gap-4">
+            <div>
+              <div class="w-12 h-1 rounded-full bg-sky-400 mb-3"></div>
+              <h2 class="font-display text-3xl sm:text-[42px] font-extrabold text-white tracking-tight leading-none">
+                Research Objectives
+              </h2>
+            </div>
+            <span class="hidden sm:inline-flex font-mono-num text-2xl font-bold text-sky-300/90 glass-dark px-4 py-2 rounded-xl">
+              02
+            </span>
+          </div>
+        </div>
+
+        <!-- Luminous Floating Objective Sheet -->
+        <div class="reveal-item delay-2 lift-card relative bg-white border border-slate-200 rounded-2xl p-7 sm:p-10 shadow-md overflow-hidden">
+          <div class="absolute top-0 left-0 bottom-0 w-2 bg-gradient-to-b from-sky-600 via-cyan-500 to-emerald-500"></div>
+          <p class="text-[18px] sm:text-[20px] leading-[1.9] text-slate-700 pl-3 sm:pl-4">
+            The main goal of this study is to understand why patients come, cancel, or miss their visits, and to build smart models that can find these results. We also check how booking time and hospital departments affect patient visits. Finally, we count the lost fees in each department, compare doctors' working hours with booked hours, and test better ways to rebook missed visits.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 border-t border-slate-200/80">
+        <div class="h-1 w-20 rounded-full bg-gradient-to-r from-sky-600 to-cyan-400"></div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">03 / 10</span>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE 04: RESEARCH METHOD ==================== -->
+    <section class="report-page" data-slide="3">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/80">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-sky-600"></span>
+          <span class="font-mono-num text-xs font-semibold text-sky-700 tracking-wider">03</span>
+        </div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">04 / 10</span>
+      </div>
+
+      <div class="page-body">
+        <div class="reveal-item flex items-end justify-between gap-4 mb-7">
+          <div>
+            <div class="w-12 h-1.5 rounded-full bg-gradient-to-r from-sky-600 to-cyan-400 mb-3"></div>
+            <h2 class="font-display text-3xl sm:text-[40px] font-extrabold text-[#07192E] tracking-tight leading-none">
+              Research Method
+            </h2>
+          </div>
+          <span class="font-mono-num text-2xl font-bold text-sky-600/35">03</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-7 items-stretch">
+          <!-- Left: Realistic Clinical Laboratory Photo -->
+          <div class="md:col-span-5 reveal-item delay-1">
+            <div class="photo-frame h-[240px] md:h-full min-h-[380px] shimmer-card">
+              <img
+                src="https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?auto=format&fit=crop&w=1000&q=85"
+                alt="Medical Laboratory Diagnostics"
+                onerror="this.onerror=null;this.src='https://placehold.co/800x1000/0D2D4F/FFFFFF?text=Medical+Lab';"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-[#07192E]/70 via-transparent to-transparent"></div>
+              <div class="absolute bottom-4 left-4 right-4 flex items-center gap-2">
+                <div class="h-1 flex-1 rounded-full bg-sky-400"></div>
+                <div class="h-1 flex-1 rounded-full bg-cyan-300"></div>
+                <div class="h-1 flex-1 rounded-full bg-emerald-400"></div>
+                <div class="h-1 flex-1 rounded-full bg-white/60"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: 4-Stage Animated Clinical Pipeline -->
+          <div class="md:col-span-7 relative flex flex-col justify-between gap-4">
+            <!-- Vertical Glowing Connector Rail -->
+            <div class="hidden sm:block absolute left-[23px] top-8 bottom-8 w-[2px] bg-gradient-to-b from-sky-500 via-cyan-400 to-emerald-500 opacity-35"></div>
+
+            <!-- Step 1 -->
+            <div class="reveal-item delay-1 lift-card flex items-start gap-4 bg-slate-50/90 border border-slate-200/90 rounded-2xl p-5">
+              <div class="relative z-10 w-12 h-12 rounded-xl bg-gradient-to-br from-[#07192E] to-sky-700 text-white font-mono-num text-sm font-bold flex items-center justify-center shrink-0 shadow-md">
+                01
+              </div>
+              <div>
+                <h3 class="font-display text-lg font-bold text-[#07192E] mb-1">Check Visit Outcomes:</h3>
+                <p class="text-[15.5px] text-slate-600 leading-relaxed">Completed, cancelled, or missed.</p>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="reveal-item delay-2 lift-card flex items-start gap-4 bg-slate-50/90 border border-slate-200/90 rounded-2xl p-5">
+              <div class="relative z-10 w-12 h-12 rounded-xl bg-gradient-to-br from-sky-700 to-sky-500 text-white font-mono-num text-sm font-bold flex items-center justify-center shrink-0 shadow-md">
+                02
+              </div>
+              <div>
+                <h3 class="font-display text-lg font-bold text-[#07192E] mb-1">Count Lost Fees:</h3>
+                <p class="text-[15.5px] text-slate-600 leading-relaxed">Calculate lost fees in each department.</p>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="reveal-item delay-3 lift-card flex items-start gap-4 bg-slate-50/90 border border-slate-200/90 rounded-2xl p-5">
+              <div class="relative z-10 w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-600 to-teal-500 text-white font-mono-num text-sm font-bold flex items-center justify-center shrink-0 shadow-md">
+                03
+              </div>
+              <div>
+                <h3 class="font-display text-lg font-bold text-[#07192E] mb-1">Compare Doctor Hours:</h3>
+                <p class="text-[15.5px] text-slate-600 leading-relaxed">Booked hours vs. working hours.</p>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="reveal-item delay-4 lift-card flex items-start gap-4 bg-slate-50/90 border border-slate-200/90 rounded-2xl p-5">
+              <div class="relative z-10 w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-500 text-white font-mono-num text-sm font-bold flex items-center justify-center shrink-0 shadow-md">
+                04
+              </div>
+              <div>
+                <h3 class="font-display text-lg font-bold text-[#07192E] mb-1">Test Rebooking Plans:</h3>
+                <p class="text-[15.5px] text-slate-600 leading-relaxed">Try different ways to rebook visits.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 border-t border-slate-200/80">
+        <div class="h-1 w-20 rounded-full bg-gradient-to-r from-sky-600 to-cyan-400"></div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">04 / 10</span>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE 05: DATASET AND DATABASE ==================== -->
+    <section class="report-page" data-slide="4">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/80">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-sky-600"></span>
+          <span class="font-mono-num text-xs font-semibold text-sky-700 tracking-wider">04</span>
+        </div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">05 / 10</span>
+      </div>
+
+      <div class="page-body gap-6">
+        <!-- Top Header with Realistic Digital Clinical Workstation Inset -->
+        <div class="reveal-item grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <div class="md:col-span-7">
+            <div class="w-12 h-1.5 rounded-full bg-gradient-to-r from-sky-600 to-cyan-400 mb-3"></div>
+            <h2 class="font-display text-3xl sm:text-[40px] font-extrabold text-[#07192E] tracking-tight leading-tight">
+              Dataset and Database
+            </h2>
+          </div>
+          <div class="md:col-span-5">
+            <div class="photo-frame h-[112px] w-full">
+              <img
+                src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1000&q=85"
+                alt="Hospital Digital Data System"
+                onerror="this.onerror=null;this.src='https://placehold.co/800x300/0D2D4F/FFFFFF?text=Hospital+Database';"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 Animated Realistic Database Metric Bars -->
+        <div class="reveal-item delay-1 flex flex-col gap-3">
+          <!-- Table 1: Patients -->
+          <div class="lift-card bg-slate-50 border border-slate-200/90 rounded-2xl px-5 py-3.5 grid grid-cols-12 items-center gap-3">
+            <div class="col-span-5 sm:col-span-4 flex items-center gap-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-sky-600 shrink-0"></span>
+              <span class="font-display font-bold text-[15.5px] text-[#07192E]">Patients</span>
+            </div>
+            <div class="hidden sm:block sm:col-span-4">
+              <div class="h-2.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                <div class="anim-bar-fill h-full rounded-full bg-gradient-to-r from-sky-600 to-cyan-400" style="--target-width: 42%;"></div>
+              </div>
+            </div>
+            <div class="col-span-7 sm:col-span-4 flex items-baseline justify-end gap-2">
+              <span class="font-mono-num text-xl font-bold text-[#07192E]">1,500</span>
+              <span class="text-xs font-medium text-slate-500">departments</span>
+            </div>
+          </div>
+
+          <!-- Table 2: Departments -->
+          <div class="lift-card bg-white border border-slate-200/90 rounded-2xl px-5 py-3.5 grid grid-cols-12 items-center gap-3">
+            <div class="col-span-5 sm:col-span-4 flex items-center gap-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-cyan-500 shrink-0"></span>
+              <span class="font-display font-bold text-[15.5px] text-[#07192E]">Departments</span>
+            </div>
+            <div class="hidden sm:block sm:col-span-4">
+              <div class="h-2.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                <div class="anim-bar-fill h-full rounded-full bg-gradient-to-r from-cyan-500 to-sky-400" style="--target-width: 10%;"></div>
+              </div>
+            </div>
+            <div class="col-span-7 sm:col-span-4 flex items-baseline justify-end gap-2">
+              <span class="font-mono-num text-xl font-bold text-[#07192E]">4</span>
+              <span class="text-xs font-medium text-slate-500">departments</span>
+            </div>
+          </div>
+
+          <!-- Table 3: Doctors -->
+          <div class="lift-card bg-slate-50 border border-slate-200/90 rounded-2xl px-5 py-3.5 grid grid-cols-12 items-center gap-3">
+            <div class="col-span-5 sm:col-span-4 flex items-center gap-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-teal-500 shrink-0"></span>
+              <span class="font-display font-bold text-[15.5px] text-[#07192E]">Doctors</span>
+            </div>
+            <div class="hidden sm:block sm:col-span-4">
+              <div class="h-2.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                <div class="anim-bar-fill h-full rounded-full bg-gradient-to-r from-teal-500 to-emerald-400" style="--target-width: 12%;"></div>
+              </div>
+            </div>
+            <div class="col-span-7 sm:col-span-4 flex items-baseline justify-end gap-2">
+              <span class="font-mono-num text-xl font-bold text-[#07192E]">5</span>
+              <span class="text-xs font-medium text-slate-500">departments</span>
+            </div>
+          </div>
+
+          <!-- Table 4: Doctor Availability -->
+          <div class="lift-card bg-white border border-slate-200/90 rounded-2xl px-5 py-3.5 grid grid-cols-12 items-center gap-3">
+            <div class="col-span-5 sm:col-span-4 flex items-center gap-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 shrink-0"></span>
+              <span class="font-display font-bold text-[15.5px] text-[#07192E]">Doctor Availability</span>
+            </div>
+            <div class="hidden sm:block sm:col-span-4">
+              <div class="h-2.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                <div class="anim-bar-fill h-full rounded-full bg-gradient-to-r from-indigo-500 to-sky-500" style="--target-width: 28%;"></div>
+              </div>
+            </div>
+            <div class="col-span-7 sm:col-span-4 flex items-baseline justify-end gap-2">
+              <span class="font-mono-num text-xl font-bold text-[#07192E]">760</span>
+              <span class="text-xs font-medium text-slate-500">departments</span>
+            </div>
+          </div>
+
+          <!-- Table 5: Appointments (Hero Row) -->
+          <div class="lift-card shimmer-card bg-gradient-to-r from-[#07192E] to-[#0D2D4F] text-white rounded-2xl px-5 py-4 grid grid-cols-12 items-center gap-3 shadow-md">
+            <div class="col-span-5 sm:col-span-4 flex items-center gap-3">
+              <span class="pulse-beacon text-sky-400 shrink-0"></span>
+              <span class="font-display font-bold text-[16px] text-white">Appointments</span>
+            </div>
+            <div class="hidden sm:block sm:col-span-4">
+              <div class="h-2.5 w-full bg-white/15 rounded-full overflow-hidden">
+                <div class="anim-bar-fill h-full rounded-full bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-400" style="--target-width: 100%;"></div>
+              </div>
+            </div>
+            <div class="col-span-7 sm:col-span-4 flex items-baseline justify-end gap-2">
+              <span class="font-mono-num text-2xl font-bold text-sky-300">12,000</span>
+              <span class="text-xs font-medium text-sky-100/80">departments</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Analytical Context Card -->
+        <div class="reveal-item delay-3 bg-sky-50/70 border border-sky-200/80 rounded-2xl p-6">
+          <p class="text-[16px] sm:text-[17px] leading-[1.8] text-slate-700">
+            All five tables work together to track every hospital visit, its fee, and the doctor's working hours. They link 1,500 patients, 5 doctors, and 4 departments across 12,000 visits. This makes it easy for the hospital to see lost fees and find free doctor time.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 border-t border-slate-200/80">
+        <div class="h-1 w-20 rounded-full bg-gradient-to-r from-sky-600 to-cyan-400"></div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">05 / 10</span>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE 06: RELATED WORK ==================== -->
+    <section class="report-page" data-slide="5">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/80">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-sky-600"></span>
+          <span class="font-mono-num text-xs font-semibold text-sky-700 tracking-wider">05</span>
+        </div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">06 / 10</span>
+      </div>
+
+      <div class="page-body gap-6">
+        <!-- Header Row with Realistic Medical Research Photo -->
+        <div class="reveal-item grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <div class="md:col-span-7">
+            <div class="w-12 h-1.5 rounded-full bg-gradient-to-r from-sky-600 to-cyan-400 mb-3"></div>
+            <h2 class="font-display text-3xl sm:text-[40px] font-extrabold text-[#07192E] tracking-tight leading-none">
+              Related Work
+            </h2>
+          </div>
+          <div class="md:col-span-5">
+            <div class="photo-frame h-[115px] w-full">
+              <img
+                src="https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=1000&q=85"
+                alt="Clinical Research Team"
+                onerror="this.onerror=null;this.src='https://placehold.co/800x300/0D2D4F/FFFFFF?text=Clinical+Studies';"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- 2x2 Realistic Literature Matrix -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="reveal-item delay-1 lift-card bg-slate-50 border border-slate-200/90 rounded-2xl p-5 flex flex-col gap-2">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-sky-600"></span>
+              <h3 class="font-display font-bold text-[16px] text-[#07192E]">AI Models:</h3>
+            </div>
+            <p class="text-[14.5px] leading-relaxed text-slate-600">
+              Past studies used AI to check who may miss a visit (Carreras-García et al., 2020; Toffaha et al., 2025).
+            </p>
+          </div>
+
+          <div class="reveal-item delay-2 lift-card bg-slate-50 border border-slate-200/90 rounded-2xl p-5 flex flex-col gap-2">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-cyan-600"></span>
+              <h3 class="font-display font-bold text-[16px] text-[#07192E]">Reminders:</h3>
+            </div>
+            <p class="text-[14.5px] leading-relaxed text-slate-600">
+              Phone calls and SMS help patients attend, but do not fix the full problem (Parikh et al., 2010; Hasvold &amp; Wootton, 2011).
+            </p>
+          </div>
+
+          <div class="reveal-item delay-3 lift-card bg-slate-50 border border-slate-200/90 rounded-2xl p-5 flex flex-col gap-2">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-teal-600"></span>
+              <h3 class="font-display font-bold text-[16px] text-[#07192E]">Doctor Schedules:</h3>
+            </div>
+            <p class="text-[14.5px] leading-relaxed text-slate-600">
+              Some work studied doctor hours and booking rules (Ahmadi-Javid et al., 2017; Topuz et al., 2024).
+            </p>
+          </div>
+
+          <div class="reveal-item delay-4 lift-card bg-slate-50 border border-slate-200/90 rounded-2xl p-5 flex flex-col gap-2">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+              <h3 class="font-display font-bold text-[16px] text-[#07192E]">Lost Money:</h3>
+            </div>
+            <p class="text-[14.5px] leading-relaxed text-slate-600">
+              Other studies focused on hospital costs from missed visits (Kheirkhah et al., 2016; Toker et al., 2024).
+            </p>
+          </div>
+        </div>
+
+        <!-- Unified System Synthesis Card -->
+        <div class="reveal-item delay-5 shimmer-card bg-gradient-to-r from-[#07192E] via-[#0D2D4F] to-[#0369A1] text-white rounded-2xl p-6 sm:p-7 shadow-xl border border-sky-400/30">
+          <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
+            <div class="flex items-center gap-3 shrink-0">
+              <span class="pulse-beacon text-emerald-400"></span>
+              <h3 class="font-display font-bold text-lg text-sky-300">Our System:</h3>
+            </div>
+            <p class="text-[16.5px] sm:text-[17.5px] leading-relaxed text-slate-100">
+              Past work studied each part alone, while our project joins all four parts in one system.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 border-t border-slate-200/80">
+        <div class="h-1 w-20 rounded-full bg-gradient-to-r from-sky-600 to-cyan-400"></div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">06 / 10</span>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE 07: RESULTS - OUTCOME PREDICTION ==================== -->
+    <section class="report-page" data-slide="6">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/80">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-sky-600"></span>
+          <span class="font-mono-num text-xs font-semibold text-sky-700 tracking-wider">06</span>
+        </div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">07 / 10</span>
+      </div>
+
+      <div class="page-body gap-7">
+        <!-- Header with Realistic Diagnostic Screen Photograph -->
+        <div class="reveal-item grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <div class="md:col-span-7">
+            <div class="w-12 h-1.5 rounded-full bg-gradient-to-r from-sky-600 to-cyan-400 mb-3"></div>
+            <h2 class="font-display text-3xl sm:text-[38px] font-extrabold text-[#07192E] tracking-tight leading-tight">
+              Results: Outcome Prediction
+            </h2>
+          </div>
+          <div class="md:col-span-5">
+            <div class="photo-frame h-[112px] w-full">
+              <img
+                src="https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=1000&q=85"
+                alt="Medical Diagnostic Analysis"
+                onerror="this.onerror=null;this.src='https://placehold.co/800x300/0D2D4F/FFFFFF?text=AI+Diagnostics';"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Animated Circular SVG Radial Metric Gauges -->
+        <!-- Circumference r=40 => 2 * pi * 40 = 251.327 -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Gauge 1: 69.6% => offset = 251.327 * (1 - 0.696) = 76.4 -->
+          <div class="reveal-item delay-1 lift-card bg-slate-50 border border-slate-200/90 rounded-2xl p-5 flex flex-col items-center text-center gap-3">
+            <div class="relative w-24 h-24">
+              <svg viewBox="0 0 100 100" class="w-full h-full -rotate-90">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#E2E8F0" stroke-width="8" />
+                <circle class="radial-ring-progress" cx="50" cy="50" r="40" fill="none" stroke="#0284C7" stroke-width="8" stroke-linecap="round" style="--target-offset: 76.4;" />
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center font-mono-num text-lg font-bold text-[#07192E]">
+                69.6%
+              </div>
+            </div>
+            <div class="text-xs sm:text-sm font-semibold text-slate-700">Test accuracy</div>
+          </div>
+
+          <!-- Gauge 2: 0.361 => offset = 251.327 * (1 - 0.361) = 160.6 -->
+          <div class="reveal-item delay-2 lift-card bg-slate-50 border border-slate-200/90 rounded-2xl p-5 flex flex-col items-center text-center gap-3">
+            <div class="relative w-24 h-24">
+              <svg viewBox="0 0 100 100" class="w-full h-full -rotate-90">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#E2E8F0" stroke-width="8" />
+                <circle class="radial-ring-progress" cx="50" cy="50" r="40" fill="none" stroke="#0891B2" stroke-width="8" stroke-linecap="round" style="--target-offset: 160.6;" />
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center font-mono-num text-lg font-bold text-[#07192E]">
+                0.361
+              </div>
+            </div>
+            <div class="text-xs sm:text-sm font-semibold text-slate-700">Macro F1-score</div>
+          </div>
+
+          <!-- Gauge 3: 0.825 => offset = 251.327 * (1 - 0.825) = 44.0 -->
+          <div class="reveal-item delay-3 lift-card bg-emerald-50/60 border border-emerald-200/80 rounded-2xl p-5 flex flex-col items-center text-center gap-3">
+            <div class="relative w-24 h-24">
+              <svg viewBox="0 0 100 100" class="w-full h-full -rotate-90">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#D1FAE5" stroke-width="8" />
+                <circle class="radial-ring-progress" cx="50" cy="50" r="40" fill="none" stroke="#059669" stroke-width="8" stroke-linecap="round" style="--target-offset: 44.0;" />
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center font-mono-num text-lg font-bold text-emerald-900">
+                0.825
+              </div>
+            </div>
+            <div class="text-xs sm:text-sm font-semibold text-emerald-900">F1 for Completed</div>
+          </div>
+
+          <!-- Gauge 4: 0.13 => offset = 251.327 * (1 - 0.13) = 218.7 -->
+          <div class="reveal-item delay-4 lift-card bg-rose-50/70 border border-rose-200/80 rounded-2xl p-5 flex flex-col items-center text-center gap-3">
+            <div class="relative w-24 h-24">
+              <svg viewBox="0 0 100 100" class="w-full h-full -rotate-90">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#FFE4E6" stroke-width="8" />
+                <circle class="radial-ring-progress" cx="50" cy="50" r="40" fill="none" stroke="#E11D48" stroke-width="8" stroke-linecap="round" style="--target-offset: 218.7;" />
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center font-mono-num text-lg font-bold text-rose-700">
+                0.13
+              </div>
+            </div>
+            <div class="text-xs sm:text-sm font-semibold text-rose-800">F1 for Cancelled and Missed</div>
+          </div>
+        </div>
+
+        <!-- Animated Distribution Split Strip + Exact Finding -->
+        <div class="reveal-item delay-5 bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+          <div class="h-3.5 w-full bg-slate-200 rounded-full overflow-hidden flex">
+            <div class="anim-bar-fill h-full bg-gradient-to-r from-[#07192E] to-sky-600" style="--target-width: 80.58%;"></div>
+            <div class="anim-bar-fill h-full bg-gradient-to-r from-rose-500 to-amber-500" style="--target-width: 19.42%;"></div>
+          </div>
+          <p class="text-[17px] sm:text-[18.5px] leading-relaxed text-[#07192E] font-medium">
+            19.42% of visits were cancelled or missed. The model finds completed visits well but rarely detects the rare outcomes.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 border-t border-slate-200/80">
+        <div class="h-1 w-20 rounded-full bg-gradient-to-r from-sky-600 to-cyan-400"></div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">07 / 10</span>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE 08: RESULTS - FINANCIAL RISK ==================== -->
+    <section class="report-page" data-slide="7">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/80">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span>
+          <span class="font-mono-num text-xs font-semibold text-rose-700 tracking-wider">07</span>
+        </div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">08 / 10</span>
+      </div>
+
+      <div class="page-body gap-6">
+        <div class="reveal-item flex items-end justify-between gap-4">
+          <div>
+            <div class="w-12 h-1.5 rounded-full bg-gradient-to-r from-rose-600 to-amber-500 mb-3"></div>
+            <h2 class="font-display text-3xl sm:text-[40px] font-extrabold text-[#07192E] tracking-tight leading-none">
+              Results: Financial Risk
+            </h2>
+          </div>
+          <span class="font-mono-num text-2xl font-bold text-rose-600/35">07</span>
+        </div>
+
+        <!-- Cinematic Realistic Hero Financial Panel + 2 Animated Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-stretch">
+          <!-- Left: Photorealistic Hospital Backdrop Hero Card -->
+          <div class="md:col-span-7 reveal-item delay-1 relative rounded-2xl overflow-hidden shadow-xl shimmer-card min-h-[280px] flex flex-col justify-between p-7 sm:p-9 text-white bg-[#07192E]">
+            <img
+              src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1100&q=85"
+              alt="Modern Hospital Interior"
+              onerror="this.onerror=null;this.src='https://placehold.co/1000x600/07192E/FFFFFF?text=Hospital+Revenue';"
+              class="absolute inset-0 w-full h-full object-cover opacity-30"
+              style="animation: kenBurnsSlow 24s ease-in-out infinite alternate;"
+            />
+            <div class="absolute inset-0 bg-gradient-to-br from-[#07192E]/95 via-[#0D2D4F]/85 to-rose-950/75"></div>
+
+            <div class="relative z-10 flex items-center justify-between">
+              <span class="pulse-beacon text-rose-400"></span>
+              <div class="h-1 w-16 rounded-full bg-gradient-to-r from-rose-500 to-amber-400"></div>
+            </div>
+
+            <div class="relative z-10 my-6">
+              <div class="font-mono-num text-4xl sm:text-[54px] font-bold tracking-tight text-white leading-none">
+                £568,200
+              </div>
+              <div class="text-base sm:text-lg text-sky-100/90 font-medium mt-4">
+                Total nominal fees at risk
+              </div>
+            </div>
+
+            <div class="relative z-10 h-1.5 w-full bg-white/15 rounded-full overflow-hidden">
+              <div class="anim-bar-fill h-full rounded-full bg-gradient-to-r from-rose-500 via-amber-400 to-sky-400" style="--target-width: 100%;"></div>
+            </div>
+          </div>
+
+          <!-- Right Column: 98.68% Gauge + 27 Animated Scenario Matrix -->
+          <div class="md:col-span-5 flex flex-col gap-5">
+            <!-- Doctor Hours Allocated: 98.68% => offset = 251.327 * (1 - 0.9868) = 3.3 -->
+            <div class="reveal-item delay-2 lift-card flex-1 bg-slate-50 border border-slate-200/90 rounded-2xl p-6 flex items-center justify-between gap-4">
+              <div>
+                <div class="font-mono-num text-3xl sm:text-4xl font-bold text-[#07192E]">98.68%</div>
+                <div class="text-sm font-semibold text-slate-600 mt-1.5">Doctor hours allocated</div>
+              </div>
+              <div class="relative w-20 h-20 shrink-0">
+                <svg viewBox="0 0 100 100" class="w-full h-full -rotate-90">
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="#E2E8F0" stroke-width="9" />
+                  <circle class="radial-ring-progress" cx="50" cy="50" r="40" fill="none" stroke="#0284C7" stroke-width="9" stroke-linecap="round" style="--target-offset: 3.3;" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span class="w-2.5 h-2.5 rounded-full bg-sky-600"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 27 Scenarios Tested with Animated 9x3 Grid -->
+            <div class="reveal-item delay-3 lift-card flex-1 bg-slate-50 border border-slate-200/90 rounded-2xl p-6 flex flex-col justify-between gap-4">
+              <div class="flex items-baseline justify-between gap-3">
+                <div class="font-mono-num text-3xl sm:text-4xl font-bold text-[#07192E]">27</div>
+                <div class="text-sm font-semibold text-slate-600 text-right">Rescheduling scenarios tested</div>
+              </div>
+              <!-- 27 Animated Matrix Nodes (9x3) -->
+              <div id="scenarioGrid" class="grid grid-cols-9 gap-1.5" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orthopedics Highlight Banner -->
+        <div class="reveal-item delay-4 lift-card bg-gradient-to-r from-rose-50 via-amber-50/60 to-white border border-rose-200 border-l-4 border-l-rose-600 rounded-2xl p-6 shadow-sm flex items-center gap-4">
+          <span class="pulse-beacon text-rose-600 shrink-0"></span>
+          <p class="font-display text-[17.5px] sm:text-[19px] font-bold text-[#07192E] leading-relaxed">
+            Orthopedics has the highest value at risk because of its higher fee.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 border-t border-slate-200/80">
+        <div class="h-1 w-20 rounded-full bg-gradient-to-r from-rose-600 to-amber-500"></div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">08 / 10</span>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE 09: LIMITATIONS AND FUTURE WORK ==================== -->
+    <section class="report-page" data-slide="8">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/80">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-sky-600"></span>
+          <span class="font-mono-num text-xs font-semibold text-sky-700 tracking-wider">08</span>
+        </div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">09 / 10</span>
+      </div>
+
+      <div class="page-body gap-7">
+        <div class="reveal-item flex items-end justify-between gap-4">
+          <div>
+            <div class="w-12 h-1.5 rounded-full bg-gradient-to-r from-amber-500 via-sky-500 to-emerald-500 mb-3"></div>
+            <h2 class="font-display text-3xl sm:text-[40px] font-extrabold text-[#07192E] tracking-tight leading-none">
+              Limitations and Future Work
+            </h2>
+          </div>
+          <span class="font-mono-num text-2xl font-bold text-sky-600/35">08</span>
+        </div>
+
+        <!-- Dual Realistic Photo-Topped Comparative Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Card 1: Limitations -->
+          <div class="reveal-item delay-1 lift-card bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-md flex flex-col">
+            <div class="photo-frame rounded-none h-48">
+              <img
+                src="https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&w=900&q=85"
+                alt="Clinical Test Data Laboratory"
+                onerror="this.onerror=null;this.src='https://placehold.co/900x450/334155/FFFFFF?text=Clinical+Testing';"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-[#07192E]/80 via-[#07192E]/20 to-transparent"></div>
+              <div class="absolute bottom-4 left-5 right-5 flex items-center justify-between">
+                <h3 class="font-display text-2xl font-bold text-white">Limitations</h3>
+                <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+              </div>
+            </div>
+            <div class="p-6 sm:p-7 flex-1 bg-gradient-to-b from-amber-50/40 to-white">
+              <p class="text-[16.5px] sm:text-[17.5px] leading-[1.85] text-slate-700">
+                This study uses test data, so real hospital results may be different. Also, the money numbers show only visit fees, not real income, and our rebooking plans use set rates.
+              </p>
+            </div>
+            <div class="h-1.5 w-full bg-gradient-to-r from-amber-500 to-rose-500"></div>
+          </div>
+
+          <!-- Card 2: Future work -->
+          <div class="reveal-item delay-2 lift-card bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-md flex flex-col">
+            <div class="photo-frame rounded-none h-48">
+              <img
+                src="https://images.unsplash.com/photo-1504439468489-c8920d796a29?auto=format&fit=crop&w=900&q=85"
+                alt="Future Smart Hospital Systems"
+                onerror="this.onerror=null;this.src='https://placehold.co/900x450/0284C7/FFFFFF?text=Future+Hospital';"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-[#07192E]/80 via-[#07192E]/20 to-transparent"></div>
+              <div class="absolute bottom-4 left-5 right-5 flex items-center justify-between">
+                <h3 class="font-display text-2xl font-bold text-white">Future work</h3>
+                <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+              </div>
+            </div>
+            <div class="p-6 sm:p-7 flex-1 bg-gradient-to-b from-sky-50/40 to-white">
+              <p class="text-[16.5px] sm:text-[17.5px] leading-[1.85] text-slate-700">
+                In the future, we want to test this system on real hospital records. We also plan to add more patient and booking details to find missed visits better, and try our rebooking plans in a real hospital system.
+              </p>
+            </div>
+            <div class="h-1.5 w-full bg-gradient-to-r from-sky-500 to-emerald-500"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 border-t border-slate-200/80">
+        <div class="h-1 w-20 rounded-full bg-gradient-to-r from-sky-600 to-emerald-500"></div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">09 / 10</span>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE 10: CONCLUSION & THANK YOU ==================== -->
+    <section class="report-page" data-slide="9">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/80">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+          <span class="font-mono-num text-xs font-semibold text-emerald-700 tracking-wider">09</span>
+        </div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">10 / 10</span>
+      </div>
+
+      <div class="page-body gap-7">
+        <!-- Upper Luminous Conclusion Card -->
+        <div class="reveal-item">
+          <div class="w-12 h-1.5 rounded-full bg-gradient-to-r from-sky-600 to-emerald-500 mb-3"></div>
+          <h2 class="font-display text-3xl sm:text-[42px] font-extrabold text-[#07192E] tracking-tight leading-none mb-6">
+            Conclusion
+          </h2>
+          <div class="lift-card bg-gradient-to-br from-slate-50 to-sky-50/60 border border-slate-200/90 rounded-2xl p-7 sm:p-8 shadow-sm">
+            <p class="text-[17.5px] sm:text-[19px] leading-[1.88] text-slate-700">
+              In this study, we showed that missed and cancelled visits waste doctor time and lose clinic money, mostly when patients book too early. Our system joins AI with clinic costs, doctor hours, and smart rebooking plans to help hospitals make better choices. In the future, adding more patient details will help hospitals save time and give better care
+            </p>
+          </div>
+        </div>
+
+        <!-- Lower Cinematic Photorealistic Closing Plate with Animated ECG -->
+        <div class="reveal-item delay-2 relative rounded-3xl overflow-hidden shadow-2xl min-h-[250px] flex flex-col items-center justify-center text-center p-8 sm:p-12 bg-[#07192E]">
+          <img
+            src="https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&w=1400&q=85"
+            alt="Hospital Medical Care Closing"
+            onerror="this.onerror=null;this.src='https://placehold.co/1200x500/07192E/38BDF8?text=Hospital+Care';"
+            class="absolute inset-0 w-full h-full object-cover opacity-40"
+            style="animation: kenBurnsSlow 24s ease-in-out infinite alternate;"
+          />
+          <div class="absolute inset-0 bg-gradient-to-r from-[#07192E]/92 via-[#0B2A4A]/82 to-[#07192E]/92"></div>
+
+          <!-- Animated Horizon ECG Pulse -->
+          <svg viewBox="0 0 800 60" class="relative z-10 w-full max-w-lg h-12 mb-3 opacity-90" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path
+              class="ecg-path"
+              d="M0 32 L260 32 L280 32 L294 20 L306 42 L322 6 L338 54 L352 26 L366 32 L434 32 L448 22 L460 40 L474 10 L488 50 L502 28 L516 32 L800 32"
+              stroke="#38BDF8"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+
+          <div class="relative z-10 font-display text-4xl sm:text-[54px] font-extrabold tracking-tight text-white drop-shadow-md">
+            Thank you
+          </div>
+          <div class="relative z-10 mt-5 h-1.5 w-24 rounded-full bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-400"></div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 border-t border-slate-200/80">
+        <div class="h-1 w-20 rounded-full bg-gradient-to-r from-sky-600 to-emerald-500"></div>
+        <span class="font-mono-num text-xs font-medium text-slate-400">10 / 10</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= SLIDE MODE NAVIGATION DOCK ================= -->
+  <nav class="slide-dock no-print fixed bottom-5 left-1/2 -translate-x-1/2 z-50 bg-[#07192E]/95 backdrop-blur-md border border-sky-400/25 px-4 py-2.5 rounded-full shadow-2xl items-center gap-4 text-white">
+    <button id="btnPrev" type="button" class="px-3.5 py-1.5 rounded-full text-xs font-semibold text-sky-200 hover:bg-white/10 hover:text-white transition">
+      ← Prev
+    </button>
+    <span id="slideCounter" class="font-mono-num text-xs font-bold text-white min-w-[54px] text-center">1 / 10</span>
+    <button id="btnNext" type="button" class="px-3.5 py-1.5 rounded-full text-xs font-semibold text-sky-200 hover:bg-white/10 hover:text-white transition">
+      Next →
+    </button>
+  </nav>
+
+  <script>
+    (function () {
+      const btnReport = document.getElementById('btnReport');
+      const btnSlide = document.getElementById('btnSlide');
+      const btnPrint = document.getElementById('btnPrint');
+      const btnMotion = document.getElementById('btnMotion');
+      const btnPrev = document.getElementById('btnPrev');
+      const btnNext = document.getElementById('btnNext');
+      const counter = document.getElementById('slideCounter');
+      const pages = Array.from(document.querySelectorAll('.report-page'));
+      const scenarioGrid = document.getElementById('scenarioGrid');
+
+      let currentSlide = 0;
+      let motionEnabled = true;
+
+      /* Build 27 animated scenario matrix tiles (9x3) on Page 08 */
+      if (scenarioGrid) {
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < 27; i++) {
+          const cell = document.createElement('span');
+          const colorClass = i < 9
+            ? 'bg-sky-600'
+            : i < 18
+              ? 'bg-cyan-500'
+              : 'bg-rose-500';
+          cell.className = `scenario-cell h-3.5 rounded-sm ${colorClass}`;
+          cell.style.animationDelay = `${(i % 9) * 0.14 + Math.floor(i / 9) * 0.22}s`;
+          frag.appendChild(cell);
+        }
+        scenarioGrid.appendChild(frag);
+      }
+
+      /* Scroll-triggered realistic entrance & chart animations */
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in-view');
+            }
+          });
+        },
+        { threshold: 0.14 }
+      );
+
+      pages.forEach((page) => observer.observe(page));
+
+      function syncSlide() {
+        pages.forEach((page, idx) => {
+          const isActive = idx === currentSlide;
+          page.classList.toggle('active-slide', isActive);
+          if (isActive) {
+            page.classList.remove('in-view');
+            /* Force reflow so animations replay smoothly on each slide change */
+            void page.offsetWidth;
+            page.classList.add('in-view');
+          }
+        });
+        counter.textContent = (currentSlide + 1) + ' / ' + pages.length;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      btnReport.addEventListener('click', () => {
+        document.body.classList.remove('slide-mode');
+        btnReport.classList.add('bg-sky-500', 'text-white', 'shadow-sm');
+        btnReport.classList.remove('text-slate-300');
+        btnSlide.classList.remove('bg-sky-500', 'text-white', 'shadow-sm');
+        btnSlide.classList.add('text-slate-300');
+        pages.forEach((p) => p.classList.add('in-view'));
+      });
+
+      btnSlide.addEventListener('click', () => {
+        document.body.classList.add('slide-mode');
+        btnSlide.classList.add('bg-sky-500', 'text-white', 'shadow-sm');
+        btnSlide.classList.remove('text-slate-300');
+        btnReport.classList.remove('bg-sky-500', 'text-white', 'shadow-sm');
+        btnReport.classList.add('text-slate-300');
+        syncSlide();
+      });
+
+      btnMotion.addEventListener('click', () => {
+        motionEnabled = !motionEnabled;
+        document.body.classList.toggle('reduce-motion', !motionEnabled);
+        btnMotion.textContent = motionEnabled ? 'Motion: On' : 'Motion: Off';
+      });
+
+      btnPrev.addEventListener('click', () => {
+        currentSlide = (currentSlide - 1 + pages.length) % pages.length;
+        syncSlide();
+      });
+
+      btnNext.addEventListener('click', () => {
+        currentSlide = (currentSlide + 1) % pages.length;
+        syncSlide();
+      });
+
+      btnPrint.addEventListener('click', () => {
+        pages.forEach((p) => p.classList.add('in-view'));
+        window.print();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (!document.body.classList.contains('slide-mode')) return;
+        if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+          currentSlide = Math.min(pages.length - 1, currentSlide + 1);
+          syncSlide();
+        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+          currentSlide = Math.max(0, currentSlide - 1);
+          syncSlide();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
